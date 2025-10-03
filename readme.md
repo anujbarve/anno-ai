@@ -1,0 +1,1 @@
+put vosk and piper models in to the models folder and update them in the main file
