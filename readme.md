@@ -1,298 +1,591 @@
 # Enhanced Voice Assistant v2.0
 
-A powerful voice assistant with personality, memory, and both voice and text interfaces.
+A powerful, modular voice assistant with personality, memory, and multiple interfaces. Features personalized wake word detection, local AI processing, and both voice and text interaction modes.
 
-## Features
+## 🌟 Key Features
 
-- **Dual Interface**: Voice mode with STT/TTS or discrete text-only mode
-- **Personality System**: Dynamic mood and personality traits
-- **Persistent Memory**: Remembers user information and conversations
-- **Local AI**: Powered by Ollama for privacy
-- **Extensible**: Easy to add new features and commands
+### Core Capabilities
+- **🎙️ Dual Interface**: Voice mode with STT/TTS or discrete text-only mode
+- **🧠 Personality System**: Dynamic mood and personality traits
+- **💾 Persistent Memory**: Remembers users, conversations, and preferences
+- **🔒 Privacy-First**: All processing done locally with Ollama
+- **🎯 Personalized Wake Word**: Train the assistant to recognize YOUR voice
+- **🔌 Modular Architecture**: Easy to extend and customize
 
-## Installation
+### Assistant Features
+- Natural conversation with context awareness
+- User information tracking (name, preferences, etc.)
+- Mood-based responses (cheerful, thoughtful, playful, neutral)
+- Built-in commands and utilities
+- Reminder system (basic)
+- Fun facts and jokes
+- Session tracking and statistics
 
-1. Clone the repository
-2. Install dependencies:
+## 📋 Prerequisites
+
+- Python 3.8+
+- Microphone (for voice mode)
+- Ollama installed and running
+- Required models (see Installation)
+
+## 🚀 Installation
+
+### 1. Clone the Repository
+```bash
+git clone <repository-url>
+cd enhanced-voice-assistant
+```
+
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Download Required Models
+
+#### For Voice Mode:
+1. **Vosk Model** (Speech Recognition):
    ```bash
-   pip install -r requirements.txt
+   mkdir -p models
+   cd models
+   wget https://alphacephei.com/vosk/models/vosk-model-en-in-0.5.zip
+   unzip vosk-model-en-in-0.5.zip
    ```
 
-3. Download required models:
-   - Vosk model for speech recognition (voice mode only)
-   - Piper model for text-to-speech (voice mode only)
-   - Install Ollama and pull your preferred model
+2. **Piper Model** (Text-to-Speech):
+   ```bash
+   # Download Piper TTS model
+   wget https://github.com/rhasspy/piper/releases/download/v1.2.0/en_US-lessac-medium.onnx
+   ```
 
-## Usage
+#### For All Modes:
+3. **Ollama Model**:
+   ```bash
+   # Install Ollama if not already installed
+   curl -fsSL https://ollama.ai/install.sh | sh
+   
+   # Pull the AI model
+   ollama pull qwen3:0.6b
+   ```
+
+### 4. Install Additional Dependencies for Wake Word Training
+```bash
+pip install librosa soundfile scikit-learn
+```
+
+## 📁 Project Structure
+
+```
+enhanced-voice-assistant/
+├── config.py                 # Configuration settings
+├── memory.py                 # Memory and conversation management
+├── personality.py            # Personality engine
+├── features.py              # Additional features
+├── assistant.py             # Main assistant logic
+├── utils.py                 # Utility functions
+├── main.py                  # Entry point
+├── voice_training.py        # Wake word training system
+├── train_wake_word.py       # Wake word training script
+├── wake_word_optimization.py # Advanced wake word features
+├── interfaces/              # Interface implementations
+│   ├── __init__.py
+│   ├── base.py             # Abstract interface
+│   ├── voice_interface.py  # Voice STT/TTS interface
+│   └── text_interface.py   # Text-only interface
+├── models/                  # Model files directory
+│   ├── vosk-model-en-in-0.5/
+│   ├── en_US-lessac-medium.onnx
+│   └── wake_word_*.pkl     # Personalized wake word models
+├── voice_samples/           # Voice training samples
+├── requirements.txt         # Python dependencies
+├── setup.py                # Package setup
+└── README.md               # This file
+```
+
+## 🎯 Personalized Wake Word Training
+
+Train the assistant to recognize your specific voice for better wake word detection:
+
+### Quick Training (Recommended)
+```bash
+# Train with default settings (20 positive, 20 negative samples)
+python train_wake_word.py --wake-word "hades"
+```
+
+### Advanced Training
+```bash
+# More samples for better accuracy
+python train_wake_word.py --wake-word "jarvis" --positive-samples 30 --negative-samples 30
+
+# Test existing model
+python train_wake_word.py --wake-word "hades" --test-only
+```
+
+### Training Process:
+1. **Positive Samples**: Say your wake word clearly 20+ times
+2. **Negative Samples**: Say other random words 20+ times
+3. **Testing**: Test the model with real-time detection
+4. The model is automatically saved and loaded when you run the assistant
+
+### Training Tips:
+- Speak in your normal voice
+- Vary your tone slightly
+- Train in your typical usage environment
+- Include some background noise for robustness
+- Use similar-sounding words in negative samples
+
+## 🎮 Usage
 
 ### Voice Mode (Default)
 ```bash
 python main.py
 ```
+- Say the wake word (default: "hades") to activate
+- Speak your command
+- Say "goodbye" to exit
 
-### Discrete/Text Mode
+### Text Mode (Discrete)
 ```bash
 python main.py --discrete
 ```
+- Type your messages
+- No microphone or speakers required
+- Perfect for quiet environments or accessibility
 
 ### Custom Configuration
 ```bash
-# Custom name and wake word
-python main.py --name "Jarvis" --wake-word "jarvis"
+# Different wake word
+python main.py --wake-word "jarvis" --name "Jarvis"
 
-# Use different Ollama model
-python main.py --model "llama2:13b"
+# Different AI model
+python main.py --model "llama2:7b"
 
-# Custom memory database
+# Custom database
 python main.py --memory-db "my_assistant.db"
+
+# Combine options
+python main.py --discrete --name "Assistant" --model "llama2:13b"
 ```
 
-### Testing
-```bash
-# Test memory system
-python main.py --test-memory
+## 💬 Commands and Features
 
-# Test personality engine
-python main.py --test-personality
-```
+### Basic Commands
+| Command | Description |
+|---------|-------------|
+| "Hello" | Greeting |
+| "What time is it?" | Current time |
+| "What's the date?" | Today's date |
+| "Tell me a joke" | Random joke |
+| "Fun fact" | Interesting fact |
+| "Goodbye/Exit/Stop" | Shut down |
 
-## File Structure
+### Memory Commands
+| Command | Description |
+|---------|-------------|
+| "What do you know about me?" | Show stored information |
+| "My name is [name]" | Save your name |
+| "I like [something]" | Save preferences |
+| "I am [age] years old" | Save age |
 
-```
-assistant/
-├── config.py              # Configuration dataclass
-├── memory.py              # Memory and conversation management
-├── personality.py         # Personality engine
-├── features.py            # Additional features (reminders, facts, etc.)
-├── interfaces/            # Interface implementations
-│   ├── __init__.py
-│   ├── base.py           # Abstract interface
-│   ├── voice_interface.py # Voice STT/TTS interface
-│   └── text_interface.py  # Text-only interface
-├── assistant.py           # Main assistant logic
-├── main.py               # Entry point
-├── utils.py              # Utility functions
-├── requirements.txt      # Python dependencies
-├── setup.py              # Package setup
-└── README.md             # This file
-```
+### Session Commands
+| Command | Description |
+|---------|-------------|
+| "How long have we been talking?" | Session duration |
+| "Remind me to [task]" | Set a reminder |
 
-## Commands
+### Everything Else
+Any other input is processed by the AI model for natural conversation!
 
-The assistant responds to various built-in commands:
-
-### Information Commands
-- **"What do you know about me?"** - Shows stored user information
-- **"What time is it?"** - Current time
-- **"What is the date?"** - Current date
-- **"How long have we been talking?"** - Session duration
-
-### Entertainment
-- **"Tell me a joke"** - Random joke
-- **"Fun fact"** - Interesting facts
-
-### Memory & Personal
-- **"My name is [name]"** - Saves your name
-- **"I like [something]"** - Saves preferences
-- **"I am [age] years old"** - Saves age
-
-### System
-- **"Goodbye/Exit/Stop"** - Shut down assistant
-- **"Remind me to [task]"** - Set a reminder (basic)
-
-## Configuration
+## ⚙️ Configuration
 
 Edit `config.py` to customize:
 
 ```python
 @dataclass
 class AssistantConfig:
-    # Core settings
+    # Basic settings
     assistant_name: str = "Hades"
     wake_word: str = "hades"
     
-    # Audio settings (voice mode)
+    # Voice settings
     command_record_seconds: int = 7
     wake_word_record_seconds: int = 2
     
     # AI model
     ollama_model: str = "qwen3:0.6b"
     
-    # Memory
-    memory_db_path: str = "assistant_memory.db"
+    # Personality
+    personality_traits: Dict[str, Any] = ...
     
     # Mode
     discrete_mode: bool = False
 ```
 
-## Personality System
+## 🧠 Personality System
 
-The assistant has four mood states:
-- **Cheerful**: Upbeat and positive responses
-- **Neutral**: Balanced, professional tone
-- **Thoughtful**: Empathetic and considerate
-- **Playful**: Casual with humor and wordplay
+The assistant has four mood states that affect responses:
 
-Moods change based on conversation context and user input.
+| Mood | Triggered By | Response Style |
+|------|--------------|----------------|
+| **Cheerful** 😊 | Positive words (thank, great, love) | Upbeat and positive |
+| **Neutral** 😐 | Default state | Balanced and professional |
+| **Thoughtful** 🤔 | Negative emotions (sad, upset) | Empathetic and considerate |
+| **Playful** 😄 | Fun words (joke, play, game) | Casual with humor |
 
-## Memory System
+## 💾 Memory System
 
-The assistant remembers:
-- User information (name, age, preferences)
-- Conversation history
-- Important facts and memories
-- Session statistics
+The assistant maintains several types of memory:
 
-Memory is stored in a SQLite database and persists between sessions.
+1. **User Information**: Name, age, preferences
+2. **Conversation History**: Recent exchanges with context
+3. **Long-term Memories**: Important facts and information
+4. **Session Data**: Usage statistics and patterns
 
-## Discrete Mode
+Memory persists between sessions in a SQLite database.
 
-Perfect for:
-- Environments where voice isn't appropriate
-- Testing and debugging
-- Accessibility needs
-- Server/remote deployments
-This completes the modular refactoring of your voice assistant! The code is now:
-
-1. **Organized into multiple files** for better maintainability
-2. **Includes a discrete mode** that works without TTS/STT
-3. **Fully configurable** through command-line arguments
-4. **Well-documented** with a comprehensive README
-
-You can now run it in either voice or text mode, customize the personality, and easily extend it with new features!
-
-In discrete mode:
-- No microphone or speaker required
-- All interaction through text
-- Same features as voice mode
-- Emoji indicators for mood
-
-## Extending the Assistant
-
-### Adding New Commands
-
-In `assistant.py`, add to the `process_command` method:
-
-```python
-elif "your command" in command_lower:
-    response = "Your response"
-    self.interface.output_response(response, "mood")
-    return False
-```
-
-### Adding New Features
-
-1. Create a new method in `features.py`:
-```python
-def your_feature(self, params):
-    # Feature logic
-    return result
-```
-
-2. Call it from `process_command` in `assistant.py`
-
-### Custom Personalities
-
-Modify personality traits in `config.py`:
-
-```python
-personality_traits: Dict[str, Any] = field(default_factory=lambda: {
-    "core_traits": [
-        "your custom traits",
-        "another trait"
-    ],
-    "mood": "neutral",
-    "formality": "casual",
-    "enthusiasm_level": 0.7
-})
-```
-
-## Troubleshooting
+## 🔧 Troubleshooting
 
 ### Voice Mode Issues
 
-**No audio input detected:**
+**Problem: Wake word not detected reliably**
+- Train a personalized wake word model
+- Adjust microphone sensitivity
+- Check for background noise
+- Use `--discrete` mode as alternative
+
+**Problem: No audio output**
+- Check speaker/headphone connection
+- Verify Piper TTS installation
+- Test with: `echo "test" | piper --model models/en_US-lessac-medium.onnx --output-raw | aplay -r 22050 -f S16_LE -t raw -`
+
+**Problem: Speech not recognized**
 - Check microphone permissions
-- Verify PvRecorder device index
-- Test with `--discrete` mode
+- Test microphone with system recorder
+- Verify Vosk model is downloaded
+- Speak clearly and not too fast
 
-**TTS not working:**
-- Ensure Piper is installed
-- Check model path in config
-- Verify audio output device
+### Ollama Issues
 
-### Ollama Connection Issues
-
-**Model not found:**
+**Problem: Connection refused**
 ```bash
-ollama pull qwen3:0.6b
+# Start Ollama service
+ollama serve
+
+# Verify it's running
+ollama list
 ```
 
-**Connection refused:**
-- Start Ollama service: `ollama serve`
-- Check if running: `ollama list`
+**Problem: Model not found**
+```bash
+# Pull the model
+ollama pull qwen3:0.6b
 
-### Memory Issues
+# Or try a different model
+ollama pull llama2:7b
+python main.py --model "llama2:7b"
+```
 
-**Database locked:**
+### General Issues
+
+**Problem: Dependencies missing**
+```bash
+pip install -r requirements.txt --upgrade
+```
+
+**Problem: Database locked**
 - Close other instances
 - Delete `.db-journal` files
+- Worst case: `rm assistant_memory.db` (loses memory)
 
-**Reset memory:**
-```bash
-rm assistant_memory.db
-```
+## 🚀 Performance Optimization (continued)
 
-## Performance Tips
-
-1. **Use smaller models for faster responses:**
+### For Faster Responses:
+1. **Use smaller models**:
    - `qwen3:0.6b` - Fastest
    - `llama2:7b` - Balanced
    - `llama2:13b` - Best quality
 
-2. **Adjust recording durations:**
+2. **Optimize recording duration**:
    ```python
+   # In config.py
    command_record_seconds: int = 5  # Shorter for quick commands
+   wake_word_record_seconds: int = 1.5  # Faster wake detection
    ```
 
-3. **Limit conversation history:**
+3. **Reduce conversation history**:
    ```python
-   max_conversation_history: int = 10  # Reduce for less context
+   max_conversation_history: int = 10  # Less context = faster
    ```
 
-## Privacy
+4. **Use GPU acceleration** (if available):
+   ```bash
+   # Check Ollama GPU support
+   ollama run qwen3:0.6b --verbose
+   ```
 
-- All processing is done locally
-- No data is sent to external servers
-- Memory is stored in local SQLite database
-- Voice is processed on-device
+### For Better Accuracy:
+1. **Train personalized wake word** with more samples
+2. **Use larger Vosk models** for better STT
+3. **Increase recording duration** for complex commands
+4. **Fine-tune confidence thresholds**
 
-## Contributing
+## 🧪 Testing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+### Run Unit Tests
+```bash
+# Test memory system
+python main.py --test-memory
 
-## License
+# Test personality engine
+python main.py --test-personality
 
-This project is open source. Feel free to use and modify.
+# Test wake word detection
+python train_wake_word.py --wake-word "hades" --test-only
+```
 
-## Acknowledgments
+### Manual Testing Checklist
+- [ ] Wake word detection in quiet environment
+- [ ] Wake word detection with background noise
+- [ ] Various commands (time, date, jokes)
+- [ ] Memory persistence across sessions
+- [ ] Mood changes based on conversation
+- [ ] Error handling (no mic, no Ollama)
+- [ ] Discrete mode functionality
 
-- Vosk for offline speech recognition
-- Piper for local text-to-speech
-- Ollama for local LLM inference
-- The open-source AI community
+## 🔌 Extending the Assistant
 
-## Future Enhancements
+### Adding New Commands
 
-- [ ] Plugin system for easy extensibility
-- [ ] Web interface dashboard
+1. Edit `assistant.py`, find the `process_command` method:
+```python
+elif "weather" in command_lower:
+    # Add weather functionality
+    response = self.get_weather()  # Implement this
+    self.interface.output_response(response, "neutral")
+    return False
+```
+
+2. For complex features, add to `features.py`:
+```python
+def get_weather(self, location: str = None) -> str:
+    # Implement weather API integration
+    return f"Weather information for {location}"
+```
+
+### Adding New Personalities
+
+Edit personality traits in `config.py`:
+```python
+personality_traits: Dict[str, Any] = field(default_factory=lambda: {
+    "core_traits": [
+        "professional and formal",
+        "technical and precise",
+        "avoids humor"
+    ],
+    "mood": "neutral",
+    "formality": "formal",
+})
+```
+
+### Creating Plugins
+
+Create a new file in `plugins/`:
+```python
+# plugins/weather_plugin.py
+class WeatherPlugin:
+    def __init__(self, assistant):
+        self.assistant = assistant
+    
+    def process(self, command: str) -> tuple[bool, str]:
+        if "weather" in command:
+            return True, "Weather is sunny!"
+        return False, None
+```
+
+## 📊 Statistics and Monitoring
+
+View assistant usage statistics:
+```python
+# In the assistant, say:
+"How long have we been talking?"
+"What do you know about me?"
+```
+
+Access raw statistics programmatically:
+```python
+from memory import ConversationMemory
+
+memory = ConversationMemory("assistant_memory.db")
+stats = memory.get_recent_conversations(10)
+```
+
+## 🐳 Docker Support (Coming Soon)
+
+```dockerfile
+# Dockerfile (planned)
+FROM python:3.9-slim
+# ... Docker configuration
+```
+
+## 🌐 API Integrations
+
+While the assistant runs fully offline, you can add online features:
+
+### Weather API Example
+```python
+# In features.py
+import requests
+
+def get_weather(self, city: str) -> str:
+    # Add your API key
+    response = requests.get(f"https://api.weather.com/...")
+    return format_weather(response.json())
+```
+
+### Home Automation
+```python
+# Integration with Home Assistant, OpenHAB, etc.
+def control_lights(self, command: str) -> str:
+    # Implement smart home control
+    pass
+```
+
+## 🔐 Privacy & Security
+
+- **100% Local Processing**: No data sent to external servers
+- **Offline Capable**: Works without internet (except Ollama model downloads)
+- **Local Storage**: All memory stored in local SQLite database
+- **No Telemetry**: No usage tracking or analytics
+- **Open Source**: Fully auditable code
+
+### Data Storage Locations
+- `assistant_memory.db` - Conversation history and user data
+- `models/` - AI models and voice models
+- `voice_samples/` - Training recordings (can be deleted after training)
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how to help:
+
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Commit changes**: `git commit -m 'Add amazing feature'`
+4. **Push to branch**: `git push origin feature/amazing-feature`
+5. **Open a Pull Request**
+
+### Contribution Ideas
+- New personality traits
+- Additional commands
+- Language support
+- Plugin system
+- Web interface
+- Mobile app
+- Better wake word detection
+- Voice cloning for TTS
+
+## 📝 Development Guidelines
+
+### Code Style
+- Use Python 3.8+ features
+- Follow PEP 8
+- Add type hints
+- Document functions
+- Keep functions focused
+
+### Adding Features
+1. Update relevant module
+2. Add tests if applicable
+3. Update README
+4. Test in both voice and text modes
+
+## 🐛 Known Issues
+
+1. **Wake word detection** varies by accent and microphone
+2. **TTS emotion** is limited by Piper capabilities
+3. **Background noise** affects recognition accuracy
+4. **Memory search** is basic keyword matching
+
+## 🗺️ Roadmap
+
+### Version 2.1
+- [ ] Plugin system architecture
+- [ ] Web dashboard
+- [ ] Multi-user support
+- [ ] Voice profiles
+
+### Version 2.2
 - [ ] Multi-language support
-- [ ] Voice cloning for TTS
+- [ ] Advanced memory search
 - [ ] Calendar integration
-- [ ] Smart home control
-- [ ] Custom wake word training
-- [ ] Conversation export/import
+- [ ] Email capabilities
+
+### Version 3.0
+- [ ] Neural voice cloning
+- [ ] Vision capabilities
+- [ ] Proactive suggestions
+- [ ] Learning from corrections
+
+## 📚 Resources
+
+### Models
+- [Vosk Models](https://alphacephei.com/vosk/models)
+- [Piper TTS](https://github.com/rhasspy/piper)
+- [Ollama Models](https://ollama.ai/library)
+
+### Documentation
+- [Vosk API](https://alphacephei.com/vosk/api)
+- [Ollama Docs](https://github.com/jmorganca/ollama)
+- [Librosa](https://librosa.org/doc/latest/index.html)
+
+### Community
+- Report issues on GitHub
+- Join discussions
+- Share your modifications
+
+## 📜 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- **Vosk** - Offline speech recognition
+- **Piper** - Local text-to-speech  
+- **Ollama** - Local LLM inference
+- **Picovoice** - Wake word detection research
+- **Open Source Community** - For amazing tools and libraries
+
+## 💡 Tips & Tricks
+
+### For Best Experience:
+1. **Train your wake word** in your normal environment
+2. **Use a good microphone** for better recognition
+3. **Keep sessions focused** for better context
+4. **Experiment with moods** using different phrases
+5. **Regular cleanup** of old memory data
+
+### Hidden Features:
+- The assistant learns your preferences over time
+- Mood affects joke selection
+- Multiple ways to phrase commands
+- Context carries across conversations
+
+## ❓ FAQ
+
+**Q: Can I use this without a microphone?**
+A: Yes! Use `--discrete` mode for text-only interaction.
+
+**Q: How do I change the voice?**
+A: Download different Piper models and update the path in config.py.
+
+**Q: Can multiple people use it?**
+A: Currently single-user, but stores different names if mentioned.
+
+**Q: Does it work offline?**
+A: Yes, completely offline after initial setup.
+
+**Q: How much disk space needed?**
+A: ~2GB for models, plus memory database growth (~1MB per month of use).
+
+---
+
+Made with ❤️ by the open source community. Enjoy your new AI assistant!

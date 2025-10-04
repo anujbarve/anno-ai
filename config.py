@@ -25,6 +25,10 @@ class AssistantConfig:
     # Mode settings
     discrete_mode: bool = False  # If True, use text interface instead of voice
     
+    # Wake word settings
+    use_personalized_wake_word: bool = True  # Use personalized model if available
+    wake_word_threshold: float = 0.7  # Confidence threshold for wake word detection
+    
     # Personality Configuration
     personality_traits: Dict[str, Any] = field(default_factory=lambda: {
         "core_traits": [
