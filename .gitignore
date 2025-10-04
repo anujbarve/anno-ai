@@ -1,3 +1,5 @@
 /myenv
 /models
 /__pycache__
+/voice_samples
+assistant_memory.db

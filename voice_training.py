@@ -43,7 +43,7 @@ class WakeWordTrainer:
         for i in range(num_positive):
             input(f"Press ENTER to record sample {i+1}/{num_positive}: ")
             audio_data = self._record_sample(duration=2)
-            if audio_data:
+            if audio_data is not None and audio_data.size > 0:
                 positive_samples.append(audio_data)
                 filename = os.path.join(self.sample_dir, f"{self.wake_word}_positive_{i}.wav")
                 self._save_audio(audio_data, filename)
@@ -60,7 +60,7 @@ class WakeWordTrainer:
             suggestion = example_words[i % len(example_words)] if i < len(example_words) else "any word"
             input(f"Press ENTER to record sample {i+1}/{num_negative} (try: '{suggestion}'): ")
             audio_data = self._record_sample(duration=2)
-            if audio_data:
+            if audio_data is not None and audio_data.size > 0:
                 negative_samples.append(audio_data)
                 filename = os.path.join(self.sample_dir, f"negative_{i}.wav")
                 self._save_audio(audio_data, filename)
@@ -194,7 +194,7 @@ class WakeWordTrainer:
                 input("Press ENTER to test: ")
                 audio_data = self._record_sample(duration=2)
                 
-                if audio_data:
+                if audio_data is not None and audio_data.size > 0:
                     # Extract features
                     features = self.extract_features(audio_data).reshape(1, -1)
                     features_scaled = scaler.transform(features)
