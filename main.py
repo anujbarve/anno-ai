@@ -1,3 +1,4 @@
+# main.py
 #!/usr/bin/env python3
 """
 Enhanced Voice Assistant - Main Entry Point
@@ -7,7 +8,6 @@ Supports both voice and text interfaces
 import os
 import sys
 import argparse
-import ollama
 from typing import Optional
 from config import AssistantConfig
 from assistant import EnhancedAssistant
@@ -36,20 +36,6 @@ def check_requirements(config: AssistantConfig) -> bool:
     else:
         print("✅ Discrete mode: Skipping voice model checks")
     
-    # Check Ollama connection
-    print("\n🔌 Checking Ollama connection...")
-    try:
-        test_response = ollama.chat(
-            model=config.ollama_model,
-            messages=[{'role': 'user', 'content': 'test'}],
-            stream=False
-        )
-        print("✅ Ollama: Connected")
-    except Exception as e:
-        print(f"❌ Ollama: Failed to connect - {e}")
-        print("Please make sure Ollama is running and the model is installed.")
-        all_good = False
-    
     return all_good
 
 def create_custom_assistant(args: argparse.Namespace) -> Optional[EnhancedAssistant]:
@@ -66,9 +52,6 @@ def create_custom_assistant(args: argparse.Namespace) -> Optional[EnhancedAssist
     
     if args.discrete:
         config.discrete_mode = True
-    
-    if args.model:
-        config.ollama_model = args.model
     
     if args.memory_db:
         config.memory_db_path = args.memory_db
@@ -151,8 +134,6 @@ Examples:
                       help='Assistant name (default: Hades)')
     parser.add_argument('--wake-word', type=str,
                       help='Wake word to activate assistant')
-    parser.add_argument('--model', type=str,
-                      help='Ollama model to use')
     parser.add_argument('--memory-db', type=str,
                       help='Path to memory database file')
     

@@ -1,3 +1,4 @@
+# config.py
 from dataclasses import dataclass, field
 from typing import Dict, Any, List
 
@@ -12,11 +13,8 @@ class AssistantConfig:
     command_record_seconds: int = 7
     wake_word_record_seconds: int = 2
     vosk_model_path: str = "models/vosk-model-en-in-0.5"
-    piper_model_path: str = "models/en_US-lessac-medium.onnx"
+    piper_model_path: str = "models/en_GB-northern_english_male-medium.onnx"
     piper_sample_rate: str = "22050"
-    
-    # AI settings
-    ollama_model: str = "qwen3:0.6b"
     
     # Memory settings
     memory_db_path: str = "assistant_memory.db"

@@ -1,3 +1,4 @@
+# setup.py
 from setuptools import setup, find_packages
 
 setup(
@@ -9,7 +10,7 @@ setup(
     install_requires=[
         "vosk>=0.3.45",
         "pvrecorder>=1.2.2",
-        "ollama>=0.1.7",
+        # Removed ollama dependency
     ],
     entry_points={
         "console_scripts": [
